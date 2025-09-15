@@ -23,3 +23,5 @@ npm install
 > 김성수
 
 ### 브랜치 전략
+
+![부제목 추가](https://github.com/user-attachments/assets/ed32da51-c9ed-4e35-a5f7-f12357cc6800)
