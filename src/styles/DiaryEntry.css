@@ -173,3 +173,46 @@
     padding: 8px 16px;
   }
 }
+
+/* 공개/비공개 버튼 */
+.privacy-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #e5e7eb; 
+  background: #fff;
+  color: #111827;         
+  transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.privacy-toggle svg {
+  margin-right: 4px;
+}
+
+/* 공개 상태 */
+.privacy-toggle.public {
+  background: #10b981;    
+  color: #fff;
+  border-color: #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+.privacy-toggle.public:hover {
+  background: #0ea371;
+  border-color: #0ea371;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
+}
+
+/* 비공개 상태 */
+.privacy-toggle.private {
+  background: #fff;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+.privacy-toggle.private:hover {
+  background: #f7faf7;
+  box-shadow: 0 4px 16px rgba(180, 200, 180, 0.12);
+}
