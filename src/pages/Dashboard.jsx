@@ -7,7 +7,7 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext'; -9/28 주석 처리)
 import { User, BarChart2, MessageCircle, BookOpen, Globe } from 'lucide-react';
 import Calendar from '../components/Calendar';
 import DiaryEntry from '../components/DiaryEntry';
@@ -74,7 +74,7 @@ const DashboardHome = () => {
 };
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); -9/28 주석 처리)
   const navigate = useNavigate();
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
