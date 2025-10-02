@@ -16,6 +16,7 @@ body {
 
 :root {
   /* Color palette */
+  --main-color: #6fcf6f;
   --primary-color: #5b8af0;
   --primary-light: #d0e0ff;
   --secondary-color: #ff886e;

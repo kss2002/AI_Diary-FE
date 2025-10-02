@@ -80,7 +80,7 @@
 .cta {
   text-align: center;
   padding: var(--space-12) var(--space-4);
-  background-color: var(--primary-light);
+  background-color: var(--main-color);
   border-radius: var(--radius-lg);
   margin: 0 var(--space-4);
 }
@@ -92,7 +92,7 @@
 }
 
 .cta p {
-  color: var(--neutral-600);
+  color: whitesmoke;
   font-size: var(--font-lg);
 }
 
