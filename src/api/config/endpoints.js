@@ -4,8 +4,8 @@ export const BASE_URL = 'http://13.124.81.252:8080';
 export const API_ENDPOINTS = {
   // 인증 관련
   AUTH: {
-    LOGIN: '/auth/login',
-    SIGNUP: '/auth/signup',
+    LOGIN: '/v1/users/register/login',
+    SIGNUP: '/v1/users/register/signup',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     KAKAO_LOGIN: '/auth/kakao',
