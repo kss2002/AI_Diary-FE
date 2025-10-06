@@ -1,5 +1,5 @@
 // API 엔드포인트 상수 관리
-export const BASE_URL = 'http://13.124.81.252:8080';
+export const BASE_URL = 'http://3.34.67.51:8080';
 
 export const API_ENDPOINTS = {
   // 인증 관련
