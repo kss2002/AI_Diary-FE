@@ -28,7 +28,7 @@ export const authService = {
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('isAuthenticated', 'true');
 
-        handleSuccess(response.data.message || '로그인되었습니다.');
+        handleSuccess(response.data.message || '로그인에 성공하였습니다.');
         return userData;
       } else {
         console.error('❌ Login failed - Invalid response structure:', {
