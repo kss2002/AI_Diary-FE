@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../api/services/authService';
 import '../styles/Auth.css';
-
-const API_BASE = '/public/users';
 
 const Auth = () => {
   const [tab, setTab] = useState('login'); // 'login' or 'register'
@@ -16,20 +15,58 @@ const Auth = () => {
   // 에러 메시지 상태
   const [loginError, setLoginError] = useState('');
   const [registerError, setRegisterError] = useState('');
-  const [registerStep, setRegisterStep] = useState(1); // 1: 기본정보, 2: 이메일코드, 3: 완료
+  const [registerStep, setRegisterStep] = useState(1); // 1: 기본정보, 3: 완료
   const [registerLoading, setRegisterLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [verificationError, setVerificationError] = useState('');
-  const [emailForVerification, setEmailForVerification] = useState('');
+  const [showPasswordHints, setShowPasswordHints] = useState(false);
 
   const navigate = useNavigate();
   const { login: loginContext } = useAuth();
 
+  // 비밀번호 유효성 검사 함수
+  const validatePassword = (password) => {
+    if (!password.trim()) return '비밀번호를 입력하세요.';
+    if (password.length < 8) return '비밀번호는 최소 8자 이상이어야 합니다.';
+
+    // 영어(대소문자), 숫자, 특수문자 포함 여부 검사
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+
+    if (!hasLetter) return '비밀번호에 영어를 포함해주세요.';
+    if (!hasNumber) return '비밀번호에 숫자를 포함해주세요.';
+    if (!hasSpecialChar) return '비밀번호에 특수문자를 포함해주세요.';
+
+    return '';
+  };
+
+  // 비밀번호 힌트 상태를 가져오는 함수
+  const getPasswordHints = (password) => {
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+    const hasMinLength = password.length >= 8;
+
+    return {
+      hasMinLength,
+      hasLetter,
+      hasNumber,
+      hasSpecialChar,
+    };
+  };
+
   // 유효성 검사 함수
   const validateRegister = () => {
     if (!registerId.trim()) return '아이디(이메일)를 입력하세요.';
-    if (!registerPw.trim()) return '비밀번호를 입력하세요.';
+
+    // 이메일 형식 검사
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registerId)) return '올바른 이메일 형식을 입력하세요.';
+
+    // 비밀번호 검사
+    const passwordError = validatePassword(registerPw);
+    if (passwordError) return passwordError;
+
     if (!registerNickname.trim()) return '닉네임을 입력하세요.';
     if (registerNickname.length < 2 || registerNickname.length > 8)
       return '닉네임은 2~8글자여야 합니다.';
@@ -42,107 +79,52 @@ const Auth = () => {
     return '';
   };
 
-  // 회원가입 1단계: 임시 회원 생성
+  // 회원가입 - 새로운 API 사용
   const handleRegister = async (e) => {
     e.preventDefault();
     const err = validateRegister();
     setRegisterError(err);
     if (err) return;
+
     setRegisterLoading(true);
     setRegisterError('');
+
     try {
-      const res = await fetch(`${API_BASE}/register/app`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: registerId,
-          password: registerPw,
-          nickname: registerNickname,
-        }),
-        credentials: 'include',
+      await authService.signup({
+        email: registerId,
+        password: registerPw,
+        nickName: registerNickname,
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setRegisterError(
-          data.message ||
-            '회원가입 실패: 이미 등록된 이메일이거나 서버 오류입니다.'
-        );
-        setRegisterLoading(false);
-        return;
-      }
-      setEmailForVerification(registerId);
-      setRegisterStep(2);
-      // 2단계: 이메일 인증코드 발송
-      await fetch(
-        `${API_BASE}/email/send?email=${encodeURIComponent(registerId)}`,
-        {
-          method: 'POST',
-          credentials: 'include',
-        }
-      );
-    } catch (err) {
-      setRegisterError('네트워크 오류 또는 서버 오류입니다.');
+
+      // 회원가입 성공 시 완료 단계로 이동
+      setRegisterStep(3);
+    } catch (error) {
+      setRegisterError(error.message || '회원가입 중 오류가 발생했습니다.');
     } finally {
       setRegisterLoading(false);
     }
   };
 
-  // 회원가입 2단계: 이메일 인증코드 검증
-  const handleVerifyCode = async (e) => {
-    e.preventDefault();
-    setVerificationError('');
-    setRegisterLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE}/register/email/verify?email=${encodeURIComponent(
-          emailForVerification
-        )}&verificationCode=${encodeURIComponent(verificationCode)}`,
-        {
-          method: 'POST',
-          credentials: 'include',
-        }
-      );
-      if (!res.ok) {
-        setVerificationError('인증코드가 올바르지 않거나 만료되었습니다.');
-        setRegisterLoading(false);
-        return;
-      }
-      setRegisterStep(3); // 완료 단계(추가 정보 입력은 추후)
-    } catch (err) {
-      setVerificationError('네트워크 오류 또는 서버 오류입니다.');
-    } finally {
-      setRegisterLoading(false);
-    }
-  };
-
-  // 로그인
+  // 로그인 - 새로운 API 사용
   const handleLogin = async (e) => {
     e.preventDefault();
     const err = validateLogin();
     setLoginError(err);
     if (err) return;
+
     setLoginLoading(true);
     setLoginError('');
+
     try {
-      const res = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginId, password: loginPw }),
-        credentials: 'include',
+      const userData = await authService.login({
+        email: loginId,
+        password: loginPw,
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setLoginError(
-          data.message || '로그인 실패: 아이디 또는 비밀번호를 확인하세요.'
-        );
-        setLoginLoading(false);
-        return;
-      }
-      const data = await res.json();
-      loginContext(data); // AuthContext에 사용자 정보 저장
+
+      loginContext(userData); // AuthContext에 사용자 정보 저장
       navigate('/dashboard');
-    } catch (err) {
-      setLoginError('네트워크 오류 또는 서버 오류입니다.');
+    } catch (error) {
+      setLoginError(error.message || '로그인 중 오류가 발생했습니다.');
     } finally {
       setLoginLoading(false);
     }
@@ -208,12 +190,55 @@ const Auth = () => {
                   />
                   <input
                     type="password"
-                    placeholder="비밀번호"
+                    placeholder="비밀번호 (영어+숫자+특수문자, 8자 이상)"
                     value={registerPw}
                     onChange={(e) => setRegisterPw(e.target.value)}
+                    onFocus={() => setShowPasswordHints(true)}
+                    onBlur={() => setShowPasswordHints(false)}
                     autoComplete="new-password"
                     disabled={registerLoading}
                   />
+                  {showPasswordHints && registerPw && (
+                    <div className="password-hints">
+                      <div className="password-hint-title">비밀번호 조건:</div>
+                      <div
+                        className={`password-hint ${
+                          getPasswordHints(registerPw).hasMinLength
+                            ? 'valid'
+                            : 'invalid'
+                        }`}
+                      >
+                        ✓ 최소 8자 이상
+                      </div>
+                      <div
+                        className={`password-hint ${
+                          getPasswordHints(registerPw).hasLetter
+                            ? 'valid'
+                            : 'invalid'
+                        }`}
+                      >
+                        ✓ 영어 포함
+                      </div>
+                      <div
+                        className={`password-hint ${
+                          getPasswordHints(registerPw).hasNumber
+                            ? 'valid'
+                            : 'invalid'
+                        }`}
+                      >
+                        ✓ 숫자 포함
+                      </div>
+                      <div
+                        className={`password-hint ${
+                          getPasswordHints(registerPw).hasSpecialChar
+                            ? 'valid'
+                            : 'invalid'
+                        }`}
+                      >
+                        ✓ 특수문자 포함
+                      </div>
+                    </div>
+                  )}
                   <input
                     type="text"
                     placeholder="닉네임 (2~8글자)"
@@ -230,23 +255,7 @@ const Auth = () => {
                   </button>
                 </form>
               )}
-              {registerStep === 2 && (
-                <form className="auth-form" onSubmit={handleVerifyCode}>
-                  <input
-                    type="text"
-                    placeholder="이메일로 받은 인증코드 입력"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    disabled={registerLoading}
-                  />
-                  {verificationError && (
-                    <div className="auth-error">{verificationError}</div>
-                  )}
-                  <button type="submit" disabled={registerLoading}>
-                    {registerLoading ? '인증 중...' : '인증하기'}
-                  </button>
-                </form>
-              )}
+
               {registerStep === 3 && (
                 <div className="auth-success">
                   회원가입이 완료되었습니다! 로그인 후 이용해 주세요.
