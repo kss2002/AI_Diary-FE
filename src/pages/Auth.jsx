@@ -96,8 +96,18 @@ const Auth = () => {
         nickName: registerNickname,
       });
 
-      // 회원가입 성공 시 완료 단계로 이동
-      setRegisterStep(3);
+      // 회원가입 성공 시 로그인 탭으로 자동 이동
+      setRegisterStep(1); // 상태 초기화
+      setTab('login'); // 로그인 탭으로 전환
+
+      // 회원가입한 이메일을 로그인 필드에 자동 입력
+      setLoginId(registerId);
+      setLoginPw(''); // 보안상 비밀번호는 비워둠
+
+      // 회원가입 필드들 초기화
+      setRegisterId('');
+      setRegisterPw('');
+      setRegisterNickname('');
     } catch (error) {
       setRegisterError(error.message || '회원가입 중 오류가 발생했습니다.');
     } finally {
@@ -116,15 +126,33 @@ const Auth = () => {
     setLoginError('');
 
     try {
+      console.log('🔄 로그인 시도:', { email: loginId });
+
       const userData = await authService.login({
         email: loginId,
         password: loginPw,
       });
 
+      console.log('✅ 로그인 성공:', userData);
       loginContext(userData); // AuthContext에 사용자 정보 저장
       navigate('/dashboard');
     } catch (error) {
-      setLoginError(error.message || '로그인 중 오류가 발생했습니다.');
+      console.error('❌ 로그인 실패:', error);
+
+      // 더 구체적인 에러 메시지 표시
+      let errorMessage = '로그인 중 오류가 발생했습니다.';
+
+      if (error.status === 401) {
+        errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
+      } else if (error.status === 400) {
+        errorMessage = '입력 정보를 확인해주세요.';
+      } else if (error.status >= 500) {
+        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setLoginError(errorMessage);
     } finally {
       setLoginLoading(false);
     }
