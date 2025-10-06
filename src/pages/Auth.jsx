@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../api/services/authService';
 import '../styles/Auth.css';
+import { EyeOff } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 const Auth = () => {
   const [tab, setTab] = useState('login'); // 'login' or 'register'
@@ -19,6 +21,9 @@ const Auth = () => {
   const [registerLoading, setRegisterLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [showPasswordHints, setShowPasswordHints] = useState(false);
+  // 비밀번호 가시성 상태
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
 
   const navigate = useNavigate();
   const { login: loginContext } = useAuth();
@@ -191,16 +196,30 @@ const Auth = () => {
                 autoComplete="username"
                 disabled={loginLoading}
               />
-              <input
-                type="password"
-                placeholder="비밀번호"
-                value={loginPw}
-                onChange={(e) => setLoginPw(e.target.value)}
-                autoComplete="current-password"
-                disabled={loginLoading}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showLoginPassword ? 'text' : 'password'}
+                  placeholder="비밀번호"
+                  value={loginPw}
+                  onChange={(e) => setLoginPw(e.target.value)}
+                  autoComplete="current-password"
+                  disabled={loginLoading}
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  disabled={loginLoading}
+                >
+                  {showLoginPassword ? <Eye /> : <EyeOff />}
+                </button>
+              </div>
               {loginError && <div className="auth-error">{loginError}</div>}
-              <button type="submit" disabled={loginLoading}>
+              <button
+                className="auth-form-btn"
+                type="submit"
+                disabled={loginLoading}
+              >
                 {loginLoading ? '로그인 중...' : '로그인'}
               </button>
             </form>
@@ -216,16 +235,28 @@ const Auth = () => {
                     autoComplete="username"
                     disabled={registerLoading}
                   />
-                  <input
-                    type="password"
-                    placeholder="비밀번호 (영어+숫자+특수문자, 8자 이상)"
-                    value={registerPw}
-                    onChange={(e) => setRegisterPw(e.target.value)}
-                    onFocus={() => setShowPasswordHints(true)}
-                    onBlur={() => setShowPasswordHints(false)}
-                    autoComplete="new-password"
-                    disabled={registerLoading}
-                  />
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showRegisterPassword ? 'text' : 'password'}
+                      placeholder="비밀번호 (영어+숫자+특수문자, 8자 이상)"
+                      value={registerPw}
+                      onChange={(e) => setRegisterPw(e.target.value)}
+                      onFocus={() => setShowPasswordHints(true)}
+                      onBlur={() => setShowPasswordHints(false)}
+                      autoComplete="new-password"
+                      disabled={registerLoading}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() =>
+                        setShowRegisterPassword(!showRegisterPassword)
+                      }
+                      disabled={registerLoading}
+                    >
+                      {showRegisterPassword ? <Eye /> : <EyeOff />}
+                    </button>
+                  </div>
                   {showPasswordHints && registerPw && (
                     <div className="password-hints">
                       <div className="password-hint-title">비밀번호 조건:</div>
@@ -278,7 +309,11 @@ const Auth = () => {
                   {registerError && (
                     <div className="auth-error">{registerError}</div>
                   )}
-                  <button type="submit" disabled={registerLoading}>
+                  <button
+                    className="auth-form-btn"
+                    type="submit"
+                    disabled={registerLoading}
+                  >
                     {registerLoading ? '처리 중...' : '회원가입'}
                   </button>
                 </form>
