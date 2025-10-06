@@ -7,7 +7,6 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext'; -9/28 주석 처리)
 import { User, BarChart2, MessageCircle, BookOpen, Globe } from 'lucide-react';
 import Calendar from '../components/Calendar';
 import DiaryEntry from '../components/DiaryEntry';
@@ -19,9 +18,6 @@ import MyPage from './MyPage';
 import Analysis from './Analysis';
 import ChatAI from './ChatAI';
 import Community from './Community';
-
-// 내부 페이지 컴포넌트 (임시)
-// const Analysis = () => <div style={{ padding: 32 }}>분석</div>;
 
 const navItems = [
   { name: '대시보드', icon: <BookOpen size={24} />, path: '/dashboard' },
@@ -74,16 +70,9 @@ const DashboardHome = () => {
 };
 
 const Dashboard = () => {
-  // const { user } = useAuth(); -9/28 주석 처리)
   const navigate = useNavigate();
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
-
-  // 로그인 안 했으면 홈으로
-
-  /* - 로그인 로직 완성시 주석 해제 필요
-  if (!user) return <Navigate to="/" replace />;
-  */
 
   // 네비게이션 클릭 시 이동
   const handleNav = (path) => {

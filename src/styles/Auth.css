@@ -23,6 +23,7 @@
   margin-top: 20px;
   margin-bottom: 18px;
 }
+
 .kakao-btn {
   background: #fee500;
   color: #3c1e1e;
@@ -33,6 +34,7 @@
   font-size: 1rem;
   cursor: pointer;
 }
+
 .google-btn {
   background: #fff;
   color: #222;
@@ -43,11 +45,13 @@
   font-size: 1rem;
   cursor: pointer;
 }
+
 .auth-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
 }
+
 .auth-tabs button {
   background: none;
   border: none;
@@ -59,25 +63,30 @@
   cursor: pointer;
   transition: color 0.2s, border-bottom 0.2s;
 }
+
 .auth-tabs button.active {
   color: #6c63ff;
   border-bottom: 2px solid #6c63ff;
 }
+
 .auth-form-block {
   width: 100%;
 }
+
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .auth-form input {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 1rem;
 }
-.auth-form button {
+
+.auth-form-btn {
   background: #6c63ff;
   color: #fff;
   border: none;
@@ -88,6 +97,42 @@
   cursor: pointer;
   margin-top: 8px;
 }
-.auth-form button:hover {
+
+.auth-form--btn:hover {
   background: #5146d8;
+}
+
+/* 비밀번호 입력란과 토글 버튼 스타일 */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 45px; /* 버튼 공간 확보 */
+  box-sizing: border-box;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.password-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
