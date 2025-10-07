@@ -82,3 +82,32 @@ body {
   font-size: 18px;
   color: #666;
 }
+
+/* 비밀번호 힌트 스타일 */
+.password-hints {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.password-hint-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #495057;
+}
+
+.password-hint {
+  padding: 2px 0;
+  transition: color 0.3s ease;
+}
+
+.password-hint.valid {
+  color: #28a745;
+}
+
+.password-hint.invalid {
+  color: #dc3545;
+}

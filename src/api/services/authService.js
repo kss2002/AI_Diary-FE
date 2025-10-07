@@ -7,19 +7,50 @@ export const authService = {
   // 일반 로그인
   async login(credentials) {
     try {
-      const response = await apiClient.post(
-        API_ENDPOINTS.AUTH.LOGIN,
-        credentials
-      );
+      console.log('🔑 Login attempt:', {
+        email: credentials.email,
+        endpoint: API_ENDPOINTS.AUTH.LOGIN,
+        fullUrl: `${apiClient.defaults.baseURL}${API_ENDPOINTS.AUTH.LOGIN}`,
+      });
 
-      // 토큰 저장
-      if (response.data.accessToken) {
-        localStorage.setItem('accessToken', response.data.accessToken);
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      // API 응답 구조 확인 및 처리
+      if (response.data && response.data.success) {
+        const userData = response.data.data;
+
+        console.log('✅ Login successful:', userData);
+
+        // 사용자 정보 저장 (토큰이 없으므로 userId로 인증 상태 관리)
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('isAuthenticated', 'true');
+
+        handleSuccess(response.data.message || '로그인에 성공하였습니다.');
+        return userData;
+      } else {
+        console.error('❌ Login failed - Invalid response structure:', {
+          success: response.data?.success,
+          data: response.data?.data,
+          message: response.data?.message,
+          fullResponse: response.data,
+        });
+        throw new Error(response.data?.message || '로그인에 실패했습니다.');
       }
-
-      handleSuccess('로그인되었습니다.');
-      return response.data;
     } catch (error) {
+      console.error('❌ Login error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL,
+        },
+      });
       throw handleApiError(error);
     }
   },
@@ -27,30 +58,35 @@ export const authService = {
   // 회원가입
   async signup(userData) {
     try {
-      const response = await apiClient.post(
-        API_ENDPOINTS.AUTH.SIGNUP,
-        userData
-      );
-      handleSuccess('회원가입이 완료되었습니다.');
-      return response.data;
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.SIGNUP, {
+        email: userData.email,
+        password: userData.password,
+        nickName: userData.nickName,
+      });
+
+      // API 응답 구조에 맞게 처리
+      if (response.data.success) {
+        handleSuccess(response.data.message || '회원가입이 완료되었습니다.');
+        return response.data.data;
+      } else {
+        throw new Error(response.data.message || '회원가입에 실패했습니다.');
+      }
     } catch (error) {
       throw handleApiError(error);
     }
   },
 
-  // 로그아웃
+  // 로그아웃 (현재는 로컬 데이터 정리만)
   async logout() {
     try {
-      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-
       // 로컬 데이터 정리
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('user');
 
       handleSuccess('로그아웃되었습니다.');
     } catch (error) {
       // 로그아웃은 실패해도 로컬 데이터는 정리
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('user');
       throw handleApiError(error);
     }
@@ -92,21 +128,24 @@ export const authService = {
     }
   },
 
-  // 토큰 검증 및 사용자 정보 조회
-  async validateToken() {
-    try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        throw new Error('No token found');
-      }
+  // 사용자 인증 상태 확인 (토큰 대신 localStorage 기반)
+  async validateAuth() {
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const savedUser = localStorage.getItem('user');
 
-      const response = await apiClient.get(API_ENDPOINTS.USER.PROFILE);
-      return response.data;
+    // 인증 정보가 없으면 null 반환 (에러가 아님)
+    if (!isAuthenticated || !savedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
     } catch (error) {
-      // 토큰이 유효하지 않으면 정리
-      localStorage.removeItem('accessToken');
+      // JSON 파싱 실패 시에만 정리하고 null 반환
+      console.warn('Failed to parse saved user data:', error);
+      localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('user');
-      throw handleApiError(error);
+      return null;
     }
   },
 

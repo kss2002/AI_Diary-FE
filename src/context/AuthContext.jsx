@@ -24,33 +24,34 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 앱 시작 시 토큰 검증
+  // 앱 시작 시 인증 상태 확인
   useEffect(() => {
-    const validateToken = async () => {
-      const token = localStorage.getItem('accessToken');
-
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
+    const validateAuth = async () => {
       try {
-        const userData = await authService.validateToken();
-        setUser(userData);
-        setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
+        const userData = await authService.validateAuth();
+
+        if (userData) {
+          // 유효한 사용자 데이터가 있는 경우
+          setUser(userData);
+          setIsAuthenticated(true);
+          console.log('✅ 기존 인증 정보 복원:', userData);
+        } else {
+          // 인증 정보가 없는 경우 (정상적인 상황)
+          setUser(null);
+          setIsAuthenticated(false);
+        }
       } catch (error) {
-        console.error('Token validation failed:', error);
+        console.error('Auth validation error:', error);
         setUser(null);
         setIsAuthenticated(false);
         localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem('isAuthenticated');
       } finally {
         setIsLoading(false);
       }
     };
 
-    validateToken();
+    validateAuth();
   }, []);
 
   const login = (userData) => {
@@ -63,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem('isAuthenticated');
   };
 
   // SWR 글로벌 설정
