@@ -1,11 +1,13 @@
-import React from 'react';
+import { Sprout } from 'lucide-react';
 
 const Navigation = ({ active, onNav, navItems }) => {
   return (
     <>
       {/* PC: 왼쪽 고정 네비게이션 */}
       <nav className="side-nav">
-        <div className="nav-logo">🌱</div>
+        <div className="nav-logo">
+          <Sprout />
+        </div>
         <ul>
           {navItems.map((item) => (
             <li
