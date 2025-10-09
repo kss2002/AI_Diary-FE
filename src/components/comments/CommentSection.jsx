@@ -142,7 +142,7 @@ export default function CommentSection({ postId }) {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button onClick={handleSubmit}>등록</button>
+        <button className="comment-submit-btn" onClick={handleSubmit}>✔️등록하기</button>
       </div>
     </div>
   );

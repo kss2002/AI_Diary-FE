@@ -1,13 +1,13 @@
 .comment-section {
   margin-top: 24px;
   padding: 20px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .comment-item {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eeeeee;
   padding: 12px 0;
 }
 
@@ -42,4 +42,21 @@
   border: 1px solid #ddd;
   resize: none;
   height: 80px;
+}
+
+.comment-submit-btn {
+  background-color: #4ecb71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.comment-submit-btn:hover {
+  background-color: #3aa85a;
+  transform: translateY(-2px);
 }

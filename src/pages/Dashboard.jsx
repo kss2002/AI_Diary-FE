@@ -39,12 +39,15 @@ const DashboardHome = () => {
   });
 
   const handleDateSelect = (date) => setSelectedDate(date);
-  const saveEntry = (date, emotion, content) => {
-    const dateKey = formatDate(date);
-    setEntries((prevEntries) => {
-      const updated = { ...prevEntries, [dateKey]: { emotion, content } };
-      localStorage.setItem('diaryEntries', JSON.stringify(updated));
-      return updated;
+  const saveEntry = (date, emotion, content, isPublic) => {
+  const dateKey = formatDate(date);
+  setEntries((prevEntries) => {
+    const updated = {
+      ...prevEntries,
+      [dateKey]: { emotion, content, isPublic },
+    };
+    localStorage.setItem('diaryEntries', JSON.stringify(updated));
+    return updated;
     });
   };
 
@@ -61,6 +64,7 @@ const DashboardHome = () => {
           date={selectedDate}
           initialEmotion={entries[formatDate(selectedDate)]?.emotion || ''}
           initialContent={entries[formatDate(selectedDate)]?.content || ''}
+          initialPublic={entries[formatDate(selectedDate)]?.isPublic || false}
           onSave={saveEntry}
         />
       </div>
