@@ -1,5 +1,5 @@
 // API 엔드포인트 상수 관리
-export const BASE_URL = 'http://3.34.67.51:8080';
+export const BASE_URL = '/api'; // 배포시에만 실제 주소 사용 http://3.34.67.51:8080
 
 export const API_ENDPOINTS = {
   // 인증 관련
