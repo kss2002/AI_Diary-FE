@@ -3,7 +3,7 @@ import { BASE_URL } from './endpoints.js';
 
 // axios 인스턴스 생성
 const apiClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

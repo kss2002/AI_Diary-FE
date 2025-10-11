@@ -22,7 +22,7 @@ export default function CommunityDetail({ post, onBack }) {
       <hr />
 
       {/* ✅ 댓글 섹션 */}
-      <CommentSection postId={post.id} />
+      <CommentSection postId={Number(post.id)} />
     </div>
   );
 }

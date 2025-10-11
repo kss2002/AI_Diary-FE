@@ -3,7 +3,7 @@ import { Globe, Lock } from 'lucide-react';
 import '../styles/DiaryEntry.css';
 import { HappyCat, SadCat, AngryCat, NeutralCat } from './EmotionCatIcons';
 
-const DiaryEntry = ({ date, initialEmotion, initialContent, onSave }) => {
+const DiaryEntry = ({ date, initialEmotion, initialContent, initialPublic, onSave }) => {
   const [emotion, setEmotion] = useState(initialEmotion || 'neutral');
   const [content, setContent] = useState(initialContent || '');
   const [isSaved, setIsSaved] = useState(false);
@@ -13,7 +13,7 @@ const DiaryEntry = ({ date, initialEmotion, initialContent, onSave }) => {
     setEmotion(initialEmotion || 'neutral');
     setContent(initialContent || '');
     setIsSaved(false);
-    setIsPublic(false); 
+    setIsPublic(initialPublic || false); 
   }, [date, initialEmotion, initialContent]);
 
   const handleSave = () => {
