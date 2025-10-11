@@ -189,15 +189,14 @@ main {
   align-items: center;
   padding: 36px 0 0 0;
   position: fixed;
-  
   left: 0;
   height: 80vh;
   z-index: 100;
   box-shadow: 0 4px 32px 0 rgba(180, 200, 180, 0.1);
   border-radius: 28px;
   margin: 2vh 0 2vh 2vw;
- 
 }
+
 .nav-logo {
   font-size: 2rem;
   margin-bottom: 38px;
