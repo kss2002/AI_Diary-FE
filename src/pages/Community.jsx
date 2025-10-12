@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { dummyData } from '../data/community';
+import CommunityDetail from '../components/comments/CommunityDetail';
 import '../styles/Community.css';
 
 const Community = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPost, setSelectedPost] = useState(null);
   const itemsPerPage = 16;
 
   const filteredData = dummyData.filter(
@@ -21,6 +23,21 @@ const Community = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  //  게시글 클릭 시 상세 보기로 전환
+  const handlePostClick = (item) => {
+    setSelectedPost(item);
+  };
+
+  //  상세 보기 → 목록으로 돌아가기
+  const handleBackToList = () => {
+    setSelectedPost(null);
+  };
+
+  //  상세 페이지 표시
+  if (selectedPost) {
+    return <CommunityDetail post={selectedPost} onBack={handleBackToList} />;
+  }
+
   return (
     <div className="community-container">
       <div className="community-header">
@@ -36,9 +53,14 @@ const Community = () => {
         </div>
       </div>
 
+      {/* 게시글 목록 */}
       <div className="diary-grid">
         {currentItems.map((item) => (
-          <div key={item.id} className="diary-card">
+          <div
+            key={item.id}
+            className="diary-card"
+            onClick={() => handlePostClick(item)} 
+          >
             <div className="diary-card-header">
               <span className="diary-author">{item.author}</span>
               <span className="diary-date">{item.date}</span>
@@ -56,6 +78,7 @@ const Community = () => {
         ))}
       </div>
 
+      {/* 페이지네이션 */}
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
           <button
