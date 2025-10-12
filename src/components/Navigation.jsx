@@ -5,9 +5,7 @@ const Navigation = ({ active, onNav, navItems }) => {
     <>
       {/* PC: 왼쪽 고정 네비게이션 */}
       <nav className="side-nav">
-        <div className="nav-logo">
-          <Sprout />
-        </div>
+        
         <ul>
           {navItems.map((item) => (
             <li

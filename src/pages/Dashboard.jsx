@@ -18,18 +18,25 @@ import MyPage from './MyPage';
 import Analysis from './Analysis';
 import ChatAI from './ChatAI';
 import Community from './Community';
+import DiaryTest from './DiaryTest';
 
-const navItems = [
-  { name: '대시보드', icon: <BookOpen size={24} />, path: '/dashboard' },
-  { name: '마이페이지', icon: <User size={24} />, path: '/dashboard/mypage' },
-  { name: '분석', icon: <BarChart2 size={24} />, path: '/dashboard/analysis' },
-  {
-    name: 'AI와 대화',
-    icon: <MessageCircle size={24} />,
-    path: '/dashboard/chat',
-  },
-  { name: '커뮤니티', icon: <Globe size={24} />, path: '/dashboard/community' },
-];
+  const navItems = [
+    { name: '대시보드', icon: <BookOpen size={24} />, path: '/dashboard' },
+    { name: '마이페이지', icon: <User size={24} />, path: '/dashboard/mypage' },
+    //{ name: '분석', icon: <BarChart2 size={24} />, path: '/dashboard/analysis' },
+    {
+      name: 'AI와 대화',
+      icon: <MessageCircle size={24} />,
+      path: '/dashboard/chat',
+    },
+    { name: '커뮤니티', icon: <Globe size={24} />, path: '/dashboard/community' },
+
+    {
+    name: '분석',
+    icon: <BookOpen size={24} />,
+    path: '/dashboard/diary',
+    },
+  ];
 
 const DashboardHome = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -94,6 +101,7 @@ const Dashboard = () => {
           <Route path="analysis" element={<Analysis />} />
           <Route path="chat" element={<ChatAI />} />
           <Route path="community" element={<Community />} />
+          <Route path="diary" element={<DiaryTest />} />
         </Routes>
       </main>
     </div>

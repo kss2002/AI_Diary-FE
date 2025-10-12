@@ -11,6 +11,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Auth from './pages/Auth';
+import DiaryPage from './pages/DiaryTest';
 import './styles/App.css';
 
 function App() {
